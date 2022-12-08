@@ -26,9 +26,9 @@ async def start_hendler(message: types.Message):
         await bot.send_message(user_id, MSG.format(user_name))
 
 
-#@dp.message_handler(commands=["new_chat_members"])
-#async def start(message: types.Message):
-    #await message.answer("Добро пожаловать!")    
+@dp.message_handler(commands=["new_chat_members"])
+async def start(message: types.Message):
+    await message.answer("Добро пожаловать!")    
 
     
 if __name__ == '__main__':
