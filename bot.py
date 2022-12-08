@@ -20,8 +20,8 @@ async def start_hendler(message: types.Message):
     logging.info(f'{user_id} {user_full_name} {time.asctime()}')   
     await message.reply(f'Привет, {user_full_name}!')
 
-    for i in range(10):
-        time.sleep(2)
+    for i in range(1):
+        time.sleep(60)
 
         await bot.send_message(user_id, MSG.format(user_name))
 
