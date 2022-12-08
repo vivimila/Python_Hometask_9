@@ -1,53 +1,70 @@
-# Создайте программу для игры в "Крестики-нолики".
+# Создайте калькулятор.
 
-board = list(range(1, 10))
 
-winning_cases = [(1,2,3),(4,5,6),(7,8,9),(1,5,9),(3,5,7),(1,4,7),(2,5,8,),(3,6,9)]
+import os
+import sys
+import random
 
-def game_board():
-    print("-------------")
-    for i in range(3):
-        print("|", board[0 + i*3], "|", board[1 + i*3], "|", board[2 + i*3], "|")
-    print("-------------")
 
-def input_an_action (entering):
-    while True:
-        value = input ("Сделайте ход. Выберите ячейку для: " + entering)  
-        if not (value in "123456789"):
-            print("Неверный ввод. Повторите попытку")
-            continue
-        value = int(value)
-        if str(board[value - 1]) in "XO":
-            print("УПС! Место занято. Повторите попытку")
-            continue
-        board[value -1] = entering
-        break
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, User
+from telegram.ext import Updater, CommandHandler, MessageHandler, \
+    ConversationHandler, Filters, CallbackQueryHandler
 
-def who_is_winner():
-    for each in winning_cases:
-        if (board[each[0]-1]) == (board[each[1]-1]) == (board[each[2]-1]):
-          return board[each[1]-1]  
-    else:
-        return False
+import strings as st
 
-def game():
-    count = 0
-    while True: 
-        game_board()
-        if count % 2 == 0:
-            input_an_action("X")
-        else:
-            input_an_action("O")
-        if count > 3:
-           winner = who_is_winner()
-           if winner:
-                game_board()
-                print(winner, "Победитель!")
-                break
-        count += 1
-        if count > 8:
-            game_board()
-            print("Ничья")
-            break
 
-game()
+
+def start(update, context):
+    context.bot.send_message(
+        update.effective_chat.id,
+        f"Привет! Я бот-калькулятор\n"
+        f"/calc - сделать расчет\n"
+        f"/convert - перевести доллары в рубли")
+
+
+def calc(update, context):
+    context.bot.send_message(
+        update.effective_chat.id,
+        f"Введите выражение\n Для выхода нажмите /stop")
+    return 1
+
+
+def eval_calc(update, context):
+    context.bot.send_message(
+        update.effective_chat.id,
+        f"Результат: {eval(update.message.text)}")
+
+
+def convert(update, context):
+    context.bot.send_message(
+        update.effective_chat.id,
+        f"Введите сумму в $\n Для выхода нажмите /stop")
+    return 1
+
+
+def converter(update, context):
+    context.bot.send_message(
+        update.effective_chat.id,
+        f"Результат: {int(update.message.text) * 55.3}")
+
+
+def stop(update, context):
+    return update.message.reply_text(st.ANSW_STOP), ConversationHandler.END
+
+
+calc_handler = ConversationHandler(
+    entry_points=[CommandHandler('calc', calc)],
+    states={
+        1: [MessageHandler(Filters.text & ~Filters.command, eval_calc)],
+    },
+    fallbacks=[CommandHandler('stop', stop)]
+)
+convert_handler = ConversationHandler(
+    entry_points=[CommandHandler('convert', convert)],
+    states={
+        1: [MessageHandler(Filters.text & ~Filters.command, converter)],
+    },
+    fallbacks=[CommandHandler('stop', stop)]
+)
+
+start_handler = CommandHandler('start', start)

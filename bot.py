@@ -1,8 +1,14 @@
-import config
+import time
+import logging
+
+#import config
+
 from aiogram import Bot, types, executor, Dispatcher
 
-bot = Bot(token=config.token)
-dp = Dispatcher(bot)
+TOKEN = "5864815319:AAGLJHzbAUIVVHWCRu1rRDCGdBp3lE6NVXY"
+
+bot = Bot(token=TOKEN)
+dp = Dispatcher(bot=bot)
 
 @dp.message_handler(commands=["start", "help"])
 async def start(message: types.Message):
@@ -11,3 +17,5 @@ async def start(message: types.Message):
 @dp.message_handler(commands=["new_chat_members"])
 async def start(message: types.Message):
     await message.answer("Добро пожаловать!")    
+
+    
